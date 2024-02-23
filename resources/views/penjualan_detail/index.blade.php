@@ -103,14 +103,14 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            {{-- <div class="form-group row">
                                 <label for="diskon" class="col-lg-2 control-label">Diskon</label>
                                 <div class="col-lg-8">
                                     <input type="number" name="diskon" id="diskon" class="form-control" 
                                         value="{{ ! empty($memberSelected->id_member) ? $diskon : 0 }}" 
                                         readonly>
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="form-group row">
                                 <label for="bayar" class="col-lg-2 control-label">Bayar</label>
                                 <div class="col-lg-8">
@@ -181,18 +181,27 @@
 
         $(document).on('input', '.quantity', function () {
             let id = $(this).data('id');
+            let stok = parseInt($(this).data('stok')); // Mengambil nilai stok dari data atribut
+
+            // Pengecekan stok produk
             let jumlah = parseInt($(this).val());
 
-            if (jumlah < 1) {
+            if (jumlah > stok - 1) {
                 $(this).val(1);
-                alert('Jumlah tidak boleh kurang dari 1');
+                alert('Tidak bisa menambah jumlah produk lagi karena produk hampir habis.');
                 return;
             }
-            if (jumlah > 10000) {
-                $(this).val(10000);
-                alert('Jumlah tidak boleh lebih dari 10000');
-                return;
-            }
+
+        if (jumlah < 1) {
+            $(this).val(1);
+            alert('Jumlah tidak boleh kurang dari 1');
+            return;
+        }
+        if (jumlah > 10000) {
+            $(this).val(10000);
+            alert('Jumlah tidak boleh lebih dari 10000');
+            return;
+        }
 
             $.post(`{{ url('/transaksi') }}/${id}`, {
                     '_token': $('[name=csrf-token]').attr('content'),
@@ -304,12 +313,14 @@
                 $('#bayar').val(response.bayar);
                 $('.tampil-bayar').text('Bayar: Rp. '+ response.bayarrp);
                 $('.tampil-terbilang').text(response.terbilang);
+                $('#total_item').val(response.total_item);
 
                 $('#kembali').val('Rp.'+ response.kembalirp);
                 if ($('#diterima').val() != 0) {
                     $('.tampil-bayar').text('Kembali: Rp. '+ response.kembalirp);
                     $('.tampil-terbilang').text(response.kembali_terbilang);
                 }
+                
             })
             .fail(errors => {
                 alert('Tidak dapat menampilkan data');
