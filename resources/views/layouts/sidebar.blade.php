@@ -112,7 +112,7 @@
             </li>
             <li>
                 <a href="{{ route('pembelian.index') }}">
-                    <i class="fa fa-download"></i> <span>Pembelian</span>
+                    <i class="fa fa-download"></i> <span>Pembelian Member</span>
                 </a>
             </li>
             <li>
